@@ -24,6 +24,7 @@ Este projeto é uma API REST desenvolvida com **Flask**, conectando-se ao **SQL 
 - Tabela: `ListaCompras`
 - Conectividade: `PyODBC` + `SQLAlchemy`
 - Todas as operações CRUD são feitas via Stored Procedures.
+- - 📎 **O script SQL de criação da tabela e das procedures está incluído no diretório `script banco de dados/` do repositório.**
 
 ### 📜 Procedures criadas:
 

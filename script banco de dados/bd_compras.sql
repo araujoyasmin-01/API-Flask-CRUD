@@ -55,5 +55,23 @@ EXEC sp_EXCLUIR_COMPRA 1;
 -- Verificar
 SELECT * FROM ListaCompras;
 
+--ALTERAÇÃO 13/05/2025
+-- adicionar tabela de usuários
+CREATE TABLE Usuarios (
+    id INT PRIMARY KEY IDENTITY(1,1),
+    username NVARCHAR(100) UNIQUE NOT NULL,
+    senha_hash NVARCHAR(255) NOT NULL
+);
+-- incluir vinculo da tabela de usuario com a tabela listaCompras
+ALTER TABLE ListaCompras
+ADD usuario_id INT;
+
+ALTER TABLE ListaCompras
+ADD CONSTRAINT FK_ListaCompras_Usuarios FOREIGN KEY (usuario_id)
+REFERENCES Usuarios(id);
+-- incluir usuario na tabela de usuarios
+INSERT INTO Usuarios(username,senha_hash)
+VALUES('adm','adm')
+
 
 

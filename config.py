@@ -1,5 +1,6 @@
 
 SQLALCHEMY_DATABASE_URI = (
-    "mssql+pyodbc://usuario:senha@servidor/SEUBANCO?driver=ODBC+Driver+17+for+SQL+Server"
+    'mssql+pyodbc://app:appteste@NITRO5_YASMIN/compras?driver=ODBC+Driver+17+for+SQL+Server'
 )
+JWT_SECRET_KEY = "M1QO923OPED93KD" 
 SQLALCHEMY_TRACK_MODIFICATIONS = False

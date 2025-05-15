@@ -1,9 +1,44 @@
 from . import db
 from sqlalchemy import text
-from app.models import ListaCompras
-from flask import jsonify, request
+from app.models import ListaCompras, Usuarios
+from flask import jsonify, request, make_response
 from decimal import Decimal
+import jwt
+from datetime import datetime, timezone, timedelta
+from config import JWT_SECRET_KEY
 
+from functools import wraps
+
+def token_obrigatorio(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+        if not token:
+            return jsonify({'mensagem': 'Token não foi incluido'}), 401
+        
+        try:
+            resultado = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
+            usuario = Usuarios.query.filter_by(id=resultado['id']).first()           
+        except:
+            return jsonify({'mensagem':'Token invalido'}), 401
+        return f(usuario, *args, **kwargs)
+    return decorated
+    
+def validar_login():
+    auth = request.authorization
+    if not auth or not auth.username or not auth.password:
+        return make_response('Login invalido', 401, {'WWW-Authenticate': 'Basic realm="Login obrigatório"'})
+    usuario = Usuarios.query.filter_by(username=auth.username).first()
+    if not usuario:
+        return make_response('Login invalido', 401, {'WWW-Authenticate': 'Basic realm="Login obrigatório"'})
+    if auth.password == usuario.senha_hash:
+        token = jwt.encode({'id':usuario.id, 'exp': datetime.now(timezone.utc) + timedelta(minutes=30)}, JWT_SECRET_KEY)
+        return jsonify({'token':token})
+    return make_response('Login invalido', 401, {'WWW-Authenticate': 'Basic realm="Login obrigatório"'})
+
+    
 
 def consultar_compra():
     compras = ListaCompras.query.all()
